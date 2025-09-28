@@ -104,27 +104,35 @@ public class NumberTriangle {
      * @throws IOException may naturally occur if an issue reading the file occurs
      */
     public static NumberTriangle loadTriangle(String fname) throws IOException {
-        // open the file and get a BufferedReader object whose methods
-        // are more convenient to work with when reading the file contents.
+        // Open file
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
-
-        // will need to return the top of the NumberTriangle,
-        // so might want a variable for that.
+        NumberTriangle[] prevRow = new NumberTriangle[0];
         NumberTriangle top = null;
 
         String line = br.readLine();
         while (line != null) {
+            // Split numbers on one or more spaces
+            String[] parts = line.trim().split("\\s+");
+            NumberTriangle[] currRow = new NumberTriangle[parts.length];
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            // Create nodes for this row
+            for (int i = 0; i < parts.length; i++) {
+                currRow[i] = new NumberTriangle(Integer.parseInt(parts[i]));
+            }
 
-            // TODO process the line
+            // Link previous row to this row
+            if (prevRow.length == 0) {
+                top = currRow[0]; // first row → root
+            } else {
+                for (int i = 0; i < prevRow.length; i++) {
+                    prevRow[i].setLeft(currRow[i]);
+                    prevRow[i].setRight(currRow[i + 1]);
+                }
+            }
 
-            //read the next line
+            prevRow = currRow; // shift down
             line = br.readLine();
         }
         br.close();
